@@ -1,16 +1,66 @@
 package com.example.mymaterialdesign
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.GridLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.mymaterialdesign.Adapter.FruitAdapter
+import com.example.mymaterialdesign.Data.Fruits
+import com.example.mymaterialdesign.Utils.showSnackBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
+    val fruits = mutableListOf(
+        Fruits("Apple", R.drawable.apple),
+        Fruits("Banana", R.drawable.banana),
+        Fruits("Orange", R.drawable.orange),
+        Fruits("Watermelon", R.drawable.watermelon),
+        Fruits("Pear", R.drawable.pear),
+        Fruits("Pineapple", R.drawable.pineapple),
+        Fruits("Strawberry", R.drawable.strawberry),
+        Fruits("Mango", R.drawable.mango),
+        Fruits("Cherry", R.drawable.cherry),
+        Fruits("Grape", R.drawable.grape)
+    )
+
+    private val fruitList = ArrayList<Fruits>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
+        findViewById<NavigationView>(R.id.navView).setCheckedItem(R.id.navCall)
+        findViewById<NavigationView>(R.id.navView).setNavigationItemSelectedListener {
+            findViewById<DrawerLayout>(R.id.drawerLayout).closeDrawers()
+            true
+        }
+        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
+            "Data deleted".showSnackBar(it, tips = "Data restored")
+        }
+        initFruits()
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val fruitAdapter = FruitAdapter(this, fruitList)
+        val layoutManager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = fruitAdapter
+    }
+
+    private fun initFruits() {
+        fruitList.clear()
+        repeat(50) {
+            val index = (0 until fruits.size).random()
+            fruitList.add(fruits[index])
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -23,6 +73,9 @@ class MainActivity : AppCompatActivity() {
             R.id.backup -> "you click the backup".showToast()
             R.id.delete -> "you click the delete".showToast()
             R.id.settings -> "you click the settings".showToast()
+            android.R.id.home -> findViewById<DrawerLayout>(R.id.drawerLayout).openDrawer(
+                GravityCompat.START
+            )
         }
         return true
     }
