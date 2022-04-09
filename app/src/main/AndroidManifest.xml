@@ -11,12 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMaterialDesign">
         <activity
+            android:name=".FruitActivity"
+            android:exported="true"
+            android:theme="@style/FruitActivityTheme" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="Fruits">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

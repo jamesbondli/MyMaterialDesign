@@ -9,14 +9,16 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.mymaterialdesign.Adapter.FruitAdapter
 import com.example.mymaterialdesign.Data.Fruits
 import com.example.mymaterialdesign.Utils.showSnackBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
-    val fruits = mutableListOf(
+    private val fruits = mutableListOf(
         Fruits("Apple", R.drawable.apple),
         Fruits("Banana", R.drawable.banana),
         Fruits("Orange", R.drawable.orange),
@@ -45,7 +47,9 @@ class MainActivity : AppCompatActivity() {
             true
         }
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
-            "Data deleted".showSnackBar(it, tips = "Data restored")
+            it.showSnackBar("Data deleted", actionText = "Undo") {
+                "Data restored".showToast()
+            }
         }
         initFruits()
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -53,6 +57,21 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = GridLayoutManager(this, 2)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = fruitAdapter
+        findViewById<SwipeRefreshLayout>(R.id.swipeRefresh).setColorSchemeResources(R.color.purple_500)
+        findViewById<SwipeRefreshLayout>(R.id.swipeRefresh).setOnRefreshListener {
+            refreshFruits(fruitAdapter)
+        }
+    }
+
+    private fun refreshFruits(adapter: FruitAdapter) {
+        thread {
+            Thread.sleep(1000)
+            runOnUiThread {
+                initFruits()
+                adapter.notifyDataSetChanged()
+                findViewById<SwipeRefreshLayout>(R.id.swipeRefresh).isRefreshing = false
+            }
+        }
     }
 
     private fun initFruits() {
