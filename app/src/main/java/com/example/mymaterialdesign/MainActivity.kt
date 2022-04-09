@@ -1,6 +1,7 @@
 package com.example.mymaterialdesign
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.GridLayout
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<SwipeRefreshLayout>(R.id.swipeRefresh).setOnRefreshListener {
             refreshFruits(fruitAdapter)
         }
+        Log.d("MainActivity", "onCreate: ")
     }
 
     private fun refreshFruits(adapter: FruitAdapter) {
